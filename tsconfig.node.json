@@ -13,6 +13,13 @@
     "moduleDetection": "force",
     "noEmit": true,
 
+    /* Node types + Alias */
+    "types": ["node"],
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"]
+    },
+
     /* Linting */
     "strict": true,
     "noUnusedLocals": true,
