@@ -10,7 +10,7 @@ const MainLayout = () => {
             </aside>
 
             <div className="flex flex-col flex-1">
-                <header className="h-[64px] border-b bg-white dark:bg-gray-900">
+                <header className="border-b bg-white dark:bg-gray-900">
                     <Header />
                 </header>
 

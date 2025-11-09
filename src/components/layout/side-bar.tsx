@@ -12,22 +12,10 @@ import {
 import {
   Menu,
   X,
-  LayoutDashboard,
-  PiggyBank,
-  CalendarDays,
-  UserSearch,
-  Trophy,
   CircleDollarSign,
 } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
-
-const menuItems = [
-  { icon: <LayoutDashboard />, name: "Dashboard", path: "/dashboard" },
-  { icon: <PiggyBank />, name: "Transaction", path: "/transaction" },
-  { icon: <CalendarDays />, name: "Daily Report", path: "/reports/daily" },
-  { icon: <UserSearch />, name: "Personal Report", path: "/reports/personal" },
-  { icon: <Trophy />, name: "Leaderboard", path: "/leaderboard" },
-];
+import { navigationItems } from "@/config/navigationItems";
 
 const drawerWidth = 256;
 const collapsedWidth = 80;
@@ -68,7 +56,7 @@ export default function Sidebar() {
 
       {/* Menu */}
       <List sx={{ px: 1, pt: 2 }}>
-        {menuItems.map((item) => {
+        {navigationItems.map((item) => {
           const isActive = location.pathname === item.path;
           return (
             <Tooltip
