@@ -4,13 +4,13 @@ import TransactionPage from "./pages/transaction/TransactionPage";
 import DailyReportPage from "./pages/reports/DailyReportPage";
 import PersonalReportPage from "./pages/reports/PersonalReportPage";
 import LeaderboardPage from "./pages/leaderboard/LeaderboardPage";
-import SideBar from "./components/layout/side-bar";
+import MainLayout from "./components/layout/main-layout";
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route element={<SideBar />}>
+        <Route element={<MainLayout />}>
           <Route path="/" element={<Navigate to="/dashboard" replace />} />
           <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/transaction" element={<TransactionPage />} />
