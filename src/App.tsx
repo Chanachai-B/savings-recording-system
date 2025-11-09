@@ -5,6 +5,7 @@ import DailyReportPage from "./pages/reports/DailyReportPage";
 import PersonalReportPage from "./pages/reports/PersonalReportPage";
 import LeaderboardPage from "./pages/leaderboard/LeaderboardPage";
 import MainLayout from "./components/layout/main-layout";
+import NotFound from "./pages/NotFound";
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
           <Route path="/reports/daily" element={<DailyReportPage />} />
           <Route path="/reports/personal" element={<PersonalReportPage />} />
           <Route path="/leaderboard" element={<LeaderboardPage />} />
+          <Route path="*" element={<NotFound />} />
         </Route>
       </Routes>
     </BrowserRouter>
