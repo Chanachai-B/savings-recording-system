@@ -11,9 +11,9 @@ export interface Transaction {
 }
 
 export interface TransactionRequest {
-    student_id: string,
-    student_name: string,
-    date: string,
-    amount: string,
-    note: string
+    student_id: string | undefined
+    student_name: string | undefined
+    date: string | undefined
+    amount: string | undefined | Number
+    note: string | undefined
 }
