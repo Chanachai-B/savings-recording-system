@@ -1,99 +1,121 @@
-import { cn } from "@/lib/cn";
-import Button from "@mui/material/Button";
-import {
-  CalendarDays,
-  CircleDollarSign,
-  LayoutDashboard,
-  Menu,
-  PiggyBank,
-  Trophy,
-  UserSearch,
-  X,
-} from "lucide-react";
 import { useState } from "react";
-import { Outlet, useNavigate } from "react-router-dom";
+import {
+  Drawer,
+  List,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+  IconButton,
+  Tooltip,
+  Divider,
+} from "@mui/material";
+import {
+  Menu,
+  X,
+  LayoutDashboard,
+  PiggyBank,
+  CalendarDays,
+  UserSearch,
+  Trophy,
+  CircleDollarSign,
+} from "lucide-react";
+import { useNavigate, useLocation } from "react-router-dom";
 
 const menuItems = [
-  { icon: LayoutDashboard, name: "Dashboard", path: "/dashboard" },
-  { icon: PiggyBank, name: "Transaction", path: "/transaction" },
-  { icon: CalendarDays, name: "Daily Report", path: "/reports/daily" },
-  { icon: UserSearch, name: "Personal Report", path: "/reports/personal" },
-  { icon: Trophy, name: "Leaderboard", path: "/leaderboard" },
+  { icon: <LayoutDashboard />, name: "Dashboard", path: "/dashboard" },
+  { icon: <PiggyBank />, name: "Transaction", path: "/transaction" },
+  { icon: <CalendarDays />, name: "Daily Report", path: "/reports/daily" },
+  { icon: <UserSearch />, name: "Personal Report", path: "/reports/personal" },
+  { icon: <Trophy />, name: "Leaderboard", path: "/leaderboard" },
 ];
 
-const SideBar = () => {
-  const [isCollapsed, setIsCollapsed] = useState(false);
+const drawerWidth = 256;
+const collapsedWidth = 80;
+
+export default function Sidebar() {
+  const [collapsed, setCollapsed] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
 
   return (
-    <div className="flex h-screen bg-gray-50 text-gray-800 dark:bg-gray-900 dark:text-gray-100 transition-colors duration-300">
-      {/* Sidebar */}
-      <aside
-        className={cn(
-          "flex flex-col shadow-lg transition-all duration-300 bg-white dark:bg-gray-800",
-          isCollapsed ? "w-20" : "w-64"
+    <Drawer
+      variant="permanent"
+      sx={{
+        width: collapsed ? collapsedWidth : drawerWidth,
+        flexShrink: 0,
+        "& .MuiDrawer-paper": {
+          width: collapsed ? collapsedWidth : drawerWidth,
+          boxSizing: "border-box",
+          backgroundColor: "background.paper",
+          color: "text.primary",
+          borderRight: "1px solid rgba(0,0,0,0.1)",
+          transition: "width 0.3s ease",
+        },
+      }}
+    >
+      {/* Header */}
+      <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200 dark:border-gray-800">
+        {!collapsed && (
+          <div className="flex items-center gap-2">
+            <CircleDollarSign className="text-emerald-500 h-6 w-6" />
+            <span className="font-semibold text-lg">Classroom Saving</span>
+          </div>
         )}
-      >
-        {/* Header */}
-        <div className="flex items-center justify-between px-4 py-3">
-          {isCollapsed ? (
-            <Button
-              onClick={() => setIsCollapsed(!isCollapsed)}
-              className="!min-w-0 !p-2"
+        <IconButton onClick={() => setCollapsed(!collapsed)} size="small">
+          {collapsed ? <Menu /> : <X />}
+        </IconButton>
+      </div>
+
+      {/* Menu */}
+      <List sx={{ px: 1, pt: 2 }}>
+        {menuItems.map((item) => {
+          const isActive = location.pathname === item.path;
+          return (
+            <Tooltip
+              key={item.path}
+              title={collapsed ? item.name : ""}
+              placement="right"
             >
-              <Menu className="h-5 w-5 text-gray-700 dark:text-gray-300" />
-            </Button>
-          ) : (
-            <div className="flex items-center justify-between w-full">
-              <div className="flex items-center gap-2">
-                <CircleDollarSign className="h-6 w-6 text-emerald-500" />
-                <span className="text-sm font-semibold">
-                  ระบบบันทึกการออมห้องเรียน
-                </span>
-              </div>
-              <Button
-                onClick={() => setIsCollapsed(!isCollapsed)}
-                className="!min-w-0 !p-2"
-              >
-                <X className="h-5 w-5 text-gray-700 dark:text-gray-300" />
-              </Button>
-            </div>
-          )}
-        </div>
-
-        {/* Menu */}
-        <nav className="flex-1 p-3 space-y-1">
-          {menuItems.map((item) => {
-            const Icon = item.icon;
-            return (
-              <Button
-                key={item.path}
+              <ListItemButton
                 onClick={() => navigate(item.path)}
-                className={cn(
-                  "w-full flex items-center rounded-md px-3 py-2 normal-case font-medium transition-all duration-200",
-                  "hover:bg-emerald-100 dark:hover:bg-emerald-900/30 hover:text-emerald-600",
-                  isCollapsed ? "justify-center" : "justify-start gap-3"
-                )}
+                sx={{
+                  borderRadius: 2,
+                  mb: 0.5,
+                  justifyContent: collapsed ? "center" : "flex-start",
+                  px: collapsed ? 2 : 3,
+                  py: 1.5,
+                  backgroundColor: isActive
+                    ? "rgba(16,185,129,0.15)"
+                    : "transparent",
+                  color: isActive ? "rgb(16,185,129)" : "inherit",
+                  "&:hover": {
+                    backgroundColor: "rgba(16,185,129,0.1)",
+                  },
+                }}
               >
-                <Icon className="h-5 w-5" />
-                {!isCollapsed && <span>{item.name}</span>}
-              </Button>
-            );
-          })}
-        </nav>
+                <ListItemIcon
+                  sx={{
+                    color: isActive ? "rgb(16,185,129)" : "inherit",
+                    minWidth: 0,
+                    mr: collapsed ? 0 : 2,
+                    justifyContent: "center",
+                  }}
+                >
+                  {item.icon}
+                </ListItemIcon>
+                {!collapsed && <ListItemText primary={item.name} />}
+              </ListItemButton>
+            </Tooltip>
+          );
+        })}
+      </List>
 
-        {/* Footer */}
-        <div className="flex justify-center p-3 text-xs text-gray-400">
-          {!isCollapsed && "v1.0.0 © Classroom Saving"}
-        </div>
-      </aside>
+      <Divider sx={{ my: "auto" }} />
 
-      {/* Main content */}
-      <main className="flex-1 bg-gray-100 dark:bg-gray-900 p-6 overflow-auto transition-colors duration-300">
-        <Outlet />
-      </main>
-    </div>
+      {/* Footer */}
+      <div className="p-3 text-center text-xs text-gray-400 dark:text-gray-500">
+        {!collapsed && "v1.0.0 © Classroom Saving"}
+      </div>
+    </Drawer>
   );
-};
-
-export default SideBar;
+}
