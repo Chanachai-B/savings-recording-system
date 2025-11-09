@@ -1,25 +1,55 @@
-import { Outlet } from "react-router-dom";
-import SideBar from "./side-bar";
-import Header from "./header";
+import { navigationItems } from "@/config/navigationItems";
+import { useEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 
-const MainLayout = () => {
+const Header = () => {
+    const location = useLocation();
+    const navigate = useNavigate();
+
+    const currentPage = navigationItems.find(
+        (item) => item.path === location.pathname
+    );
+
+    useEffect(() => {
+        if (!currentPage) {
+            navigate("/not-found", { replace: true });
+        }
+    }, [currentPage, navigate]);
+
+    if (!currentPage) return null;
+
     return (
-        <div className="flex h-screen">
-            <aside className="shrink-0">
-                <SideBar />
-            </aside>
+        <div
+            className="flex gap-2 border-b"
+            style={{
+                borderColor: "var(--color-border)",
+                backgroundColor: "var(--color-bg)",
+                color: "var(--color-text)",
+            }}
+        >
+            <div
+                className="flex justify-center items-center px-4"
+                style={{ color: "var(--color-primary)" }}
+            >
+                {currentPage.icon}
+            </div>
 
-            <div className="flex flex-col flex-1">
-                <header className="border-b bg-white dark:bg-gray-900">
-                    <Header />
-                </header>
-
-                <main className="flex-1 overflow-y-auto bg-gray-50 dark:bg-gray-950 p-6">
-                    <Outlet />
-                </main>
+            <div className="p-4 flex flex-col justify-center">
+                <h1
+                    className="text-xl font-bold"
+                    style={{ color: "var(--color-text)" }}
+                >
+                    {currentPage.name}
+                </h1>
+                <p
+                    className="text-sm"
+                    style={{ color: "var(--color-text-secondary)" }}
+                >
+                    {currentPage.description}
+                </p>
             </div>
         </div>
     );
 };
 
-export default MainLayout;
+export default Header;

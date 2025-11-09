@@ -10,13 +10,9 @@ import {
     TableRow,
 } from "@mui/material";
 
-/**
- * 🔹 Generic DataTable component
- * ใช้แสดงข้อมูลแบบ dynamic โดยใช้ headerMap + data
- */
 interface DataTableProps<T extends object> {
     data: T[];
-    headerMap: Record<keyof T & string, string>; // key → label (หัวตาราง)
+    headerMap: Record<keyof T & string, string>;
     rowsPerPage?: number;
     onPageChange?: (page: number) => void;
     loading?: boolean;
@@ -46,14 +42,30 @@ function DataTable<T extends object>({
 
     if (loading) {
         return (
-            <Paper sx={{ p: 3, textAlign: "center" }}>
+            <Paper
+                sx={{
+                    p: 3,
+                    textAlign: "center",
+                    backgroundColor: "var(--color-bg)",
+                    color: "var(--color-text)",
+                }}
+            >
                 กำลังโหลดข้อมูล...
             </Paper>
         );
     }
 
     return (
-        <Paper sx={{ width: "100%", overflow: "hidden" }}>
+        <Paper
+            sx={{
+                width: "100%",
+                overflow: "hidden",
+                backgroundColor: "var(--color-bg)",
+                color: "var(--color-text)",
+                border: "1px solid var(--color-border)",
+                borderRadius: 2,
+            }}
+        >
             <TableContainer sx={{ maxHeight: 440 }}>
                 <Table stickyHeader>
                     {/* ───────────── Header ───────────── */}
@@ -63,20 +75,31 @@ function DataTable<T extends object>({
                                 <TableCell
                                     key={key}
                                     align="center"
-                                    sx={{ fontWeight: 600, backgroundColor: "rgb(245,245,245)" }}
+                                    sx={{
+                                        fontWeight: 600,
+                                        backgroundColor: "var(--color-surface)",
+                                        color: "var(--color-text)",
+                                        borderBottom: "1px solid var(--color-border)",
+                                    }}
                                 >
-                                    {headerMap[key as keyof typeof headerMap]}
+                                    {headerMap[key as keyof typeof headerMap] as React.ReactNode}
                                 </TableCell>
                             ))}
                         </TableRow>
-
                     </TableHead>
 
                     {/* ───────────── Body ───────────── */}
                     <TableBody>
                         {data.length === 0 && (
                             <TableRow>
-                                <TableCell colSpan={headerKeys.length} align="center">
+                                <TableCell
+                                    colSpan={headerKeys.length}
+                                    align="center"
+                                    sx={{
+                                        color: "var(--color-text-secondary)",
+                                        borderBottom: "1px solid var(--color-border)",
+                                    }}
+                                >
                                     ไม่มีข้อมูล
                                 </TableCell>
                             </TableRow>
@@ -85,10 +108,21 @@ function DataTable<T extends object>({
                         {data
                             .slice(page * rowsPerPageState, page * rowsPerPageState + rowsPerPageState)
                             .map((row, rowIndex) => (
-                                <TableRow key={rowIndex} hover>
+                                <TableRow
+                                    key={rowIndex}
+                                    hover
+                                    sx={{
+                                        "&:hover": {
+                                            backgroundColor: "var(--color-primary-hover, rgba(16,185,129,0.05))",
+                                        },
+                                    }}
+                                >
                                     {headerKeys.map((key) => (
-                                        <TableCell key={String(key)} align="center">
-                                            {/* 🔹 จัดรูปแบบตัวเลขให้สวย */}
+                                        <TableCell
+                                            key={String(key)}
+                                            align="center"
+                                            sx={{ borderBottom: "1px solid var(--color-border)" }}
+                                        >
                                             {typeof row[key] === "number"
                                                 ? row[key].toLocaleString("th-TH", {
                                                     minimumFractionDigits: 2,
@@ -99,7 +133,7 @@ function DataTable<T extends object>({
                                 </TableRow>
                             ))}
 
-                        {/* 🔹 เติมแถวว่างให้ครบ rowsPerPage */}
+                        {/* เติมแถวว่างให้ครบ rowsPerPage */}
                         {data.length > 0 &&
                             Array.from({
                                 length:
@@ -107,7 +141,10 @@ function DataTable<T extends object>({
                                     Math.min(rowsPerPageState, data.length - page * rowsPerPageState),
                             }).map((_, i) => (
                                 <TableRow key={`empty-${i}`} style={{ height: 53 }}>
-                                    <TableCell colSpan={headerKeys.length} />
+                                    <TableCell
+                                        colSpan={headerKeys.length}
+                                        sx={{ borderBottom: "1px solid var(--color-border)" }}
+                                    />
                                 </TableRow>
                             ))}
                     </TableBody>
@@ -124,6 +161,11 @@ function DataTable<T extends object>({
                 onPageChange={handleChangePage}
                 onRowsPerPageChange={handleChangeRowsPerPage}
                 labelRowsPerPage="แสดงต่อหน้า"
+                sx={{
+                    backgroundColor: "var(--color-surface)",
+                    color: "var(--color-text-secondary)",
+                    borderTop: "1px solid var(--color-border)",
+                }}
             />
         </Paper>
     );

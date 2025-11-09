@@ -7,7 +7,6 @@ import {
   ListItemText,
   IconButton,
   Tooltip,
-  Divider,
 } from "@mui/material";
 import {
   Menu,
@@ -34,18 +33,24 @@ export default function Sidebar() {
         "& .MuiDrawer-paper": {
           width: collapsed ? collapsedWidth : drawerWidth,
           boxSizing: "border-box",
-          backgroundColor: "background.paper",
-          color: "text.primary",
-          borderRight: "1px solid rgba(0,0,0,0.1)",
+          backgroundColor: "var(--color-bg)",
+          color: "var(--color-text)",
+          borderRight: "1px solid var(--color-border)",
           transition: "width 0.3s ease",
         },
       }}
     >
       {/* Header */}
-      <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200 dark:border-gray-800">
+      <div
+        className="flex items-center justify-between px-4 py-3 border-b"
+        style={{ borderColor: "var(--color-border)" }}
+      >
         {!collapsed && (
           <div className="flex items-center gap-2">
-            <CircleDollarSign className="text-emerald-500 h-6 w-6" />
+            <CircleDollarSign
+              className="h-6 w-6"
+              style={{ color: "var(--color-primary)" }}
+            />
             <span className="font-semibold text-lg">Classroom Saving</span>
           </div>
         )}
@@ -73,17 +78,21 @@ export default function Sidebar() {
                   px: collapsed ? 2 : 3,
                   py: 1.5,
                   backgroundColor: isActive
-                    ? "rgba(16,185,129,0.15)"
+                    ? "var(--color-primary-light)"
                     : "transparent",
-                  color: isActive ? "rgb(16,185,129)" : "inherit",
+                  color: isActive
+                    ? "var(--color-primary)"
+                    : "var(--color-text)",
                   "&:hover": {
-                    backgroundColor: "rgba(16,185,129,0.1)",
+                    backgroundColor: "var(--color-primary-hover)",
                   },
                 }}
               >
                 <ListItemIcon
                   sx={{
-                    color: isActive ? "rgb(16,185,129)" : "inherit",
+                    color: isActive
+                      ? "var(--color-primary)"
+                      : "var(--color-text)",
                     minWidth: 0,
                     mr: collapsed ? 0 : 2,
                     justifyContent: "center",
@@ -97,13 +106,7 @@ export default function Sidebar() {
           );
         })}
       </List>
-
-      <Divider sx={{ my: "auto" }} />
-
-      {/* Footer */}
-      <div className="p-3 text-center text-xs text-gray-400 dark:text-gray-500">
-        {!collapsed && "v1.0.0 © Classroom Saving"}
-      </div>
     </Drawer>
+
   );
 }
