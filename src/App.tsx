@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { StudentProvider } from "./contexts/student-context";
 import DashboardPage from "./pages/dashboard/DashboardPage";
 import TransactionPage from "./pages/transaction/TransactionPage";
 import DailyReportPage from "./pages/reports/DailyReportPage";
@@ -9,19 +10,21 @@ import NotFound from "./pages/NotFound";
 
 function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route element={<MainLayout />}>
-          <Route path="/" element={<Navigate to="/dashboard" replace />} />
-          <Route path="/dashboard" element={<DashboardPage />} />
-          <Route path="/transaction" element={<TransactionPage />} />
-          <Route path="/reports/daily" element={<DailyReportPage />} />
-          <Route path="/reports/personal" element={<PersonalReportPage />} />
-          <Route path="/leaderboard" element={<LeaderboardPage />} />
-          <Route path="*" element={<NotFound />} />
-        </Route>
-      </Routes>
-    </BrowserRouter>
+    <StudentProvider>
+      <BrowserRouter>
+        <Routes>
+          <Route element={<MainLayout />}>
+            <Route path="/" element={<Navigate to="/dashboard" replace />} />
+            <Route path="/dashboard" element={<DashboardPage />} />
+            <Route path="/transaction" element={<TransactionPage />} />
+            <Route path="/reports/daily" element={<DailyReportPage />} />
+            <Route path="/reports/personal" element={<PersonalReportPage />} />
+            <Route path="/leaderboard" element={<LeaderboardPage />} />
+            <Route path="*" element={<NotFound />} />
+          </Route>
+        </Routes>
+      </BrowserRouter>
+    </StudentProvider>
   );
 }
 

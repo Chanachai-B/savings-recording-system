@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
     createTransactionDeposit,
     createTransactionWithdraw,
@@ -20,43 +20,40 @@ import {
 import { CirclePlus } from "lucide-react";
 import AppDialog from "@/components/ui/dialog";
 import AppButton from "@/components/ui/button";
-import type { TransactionFormData } from "./TransactionForm";
-import TransactionForm from "./TransactionForm";
+import TransactionForm, { type TransactionFormRef } from "./TransactionForm";
 
 const TransactionPage = () => {
     const [transactions, setTransactions] = useState<Transaction[]>([]);
     const [loading, setLoading] = useState(false);
     const [saving, setSaving] = useState(false);
     const [openDialog, setOpenDialog] = useState(false);
-    const [formData, setFormData] = useState<TransactionFormData | null>(null);
-    const [resultMessage, setResultMessage] = useState<string | null>(null);
     const [openResult, setOpenResult] = useState(false);
+    const [resultMessage, setResultMessage] = useState<string | null>(null);
+    const formRef = useRef<TransactionFormRef>(null);
 
-    // ────────────────────────────────
-    // 📦 โหลดข้อมูลธุรกรรม
-    // ────────────────────────────────
     const fetchTransactions = async () => {
         try {
             setLoading(true);
             const data = await getTransactions();
-            setTransactions(data);
-        } catch (error) {
+            setTransactions(data);}catch (error) {
             console.error("โหลดข้อมูลไม่สำเร็จ:", error);
         } finally {
             setLoading(false);
         }
     };
 
-    // ────────────────────────────────
-    // 💾 บันทึกข้อมูลธุรกรรม
-    // ────────────────────────────────
-    const saveTransaction = async (formData: TransactionFormData | null) => {
-        if (!formData) return;
+    
+    const handleSave = async () => {
+        if (!formRef.current) return;
+        const valid = formRef.current.validateForm();
+        if (!valid) return;
+
+        const formData = formRef.current.getFormData();
         const req: TransactionRequest = {
             student_id: formData.student_id,
             student_name: formData.student_name,
             date: formData.date,
-            amount: Number(formData.amount),
+            amount: formData.amount,
             note: formData.note,
         };
 
@@ -87,11 +84,6 @@ const TransactionPage = () => {
     useEffect(() => {
         fetchTransactions();
     }, []);
-
-    const handleClickAdd = (formData: TransactionFormData | null) => {
-        saveTransaction(formData);
-    };
-
     // ────────────────────────────────
     // 🧾 UI
     // ────────────────────────────────
@@ -102,7 +94,7 @@ const TransactionPage = () => {
                     variant="primary"
                     startIcon={<CirclePlus />}
                     onClick={() => setOpenDialog(true)}
-                >
+                    >
                     เพิ่มรายการ
                 </AppButton>
             </Paper>
@@ -113,13 +105,13 @@ const TransactionPage = () => {
                 title="เพิ่มรายการ"
                 onClose={() => setOpenDialog(false)}
                 onConfirm={() => {
-                    handleClickAdd(formData);
+                    handleSave();
                     setOpenDialog(false);
                 }}
                 confirmLabel="บันทึก"
                 cancelLabel="ปิด"
             >
-                <TransactionForm onChange={setFormData} />
+                <TransactionForm ref={formRef} />
             </AppDialog>
 
             {/* ตารางข้อมูล */}
