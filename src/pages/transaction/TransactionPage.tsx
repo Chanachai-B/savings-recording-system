@@ -59,6 +59,7 @@ const TransactionPage = () => {
 
         try {
             setSaving(true);
+            setOpenDialog(false);
 
             if (formData.type === "deposit") {
                 await createTransactionDeposit(req);
@@ -104,10 +105,7 @@ const TransactionPage = () => {
                 open={openDialog}
                 title="เพิ่มรายการ"
                 onClose={() => setOpenDialog(false)}
-                onConfirm={() => {
-                    handleSave();
-                    setOpenDialog(false);
-                }}
+                onConfirm={handleSave}
                 confirmLabel="บันทึก"
                 cancelLabel="ปิด"
             >
