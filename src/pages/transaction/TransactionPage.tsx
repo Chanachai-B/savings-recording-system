@@ -1,9 +1,5 @@
-import { useEffect, useRef, useState } from "react";
-import {
-    createTransactionDeposit,
-    createTransactionWithdraw,
-    getTransactions,
-} from "@/api/transaction.api";
+import { useRef, useState } from "react";
+import { createTransactionDeposit, createTransactionWithdraw } from "@/api/transaction.api";
 import type { Transaction, TransactionRequest } from "@/interfaces/transaction.interface";
 import { TransactionHeaderMap } from "@/models/google-sheet-column.models";
 import DataTable from "@/components/ui/table";
@@ -21,34 +17,24 @@ import { CirclePlus } from "lucide-react";
 import AppDialog from "@/components/ui/dialog";
 import AppButton from "@/components/ui/button";
 import TransactionForm, { type TransactionFormRef } from "./TransactionForm";
+import { useStudents } from "@/contexts/student-context";
+import { updateBalance } from "@/api/student.api";
 
 const TransactionPage = () => {
-    const [transactions, setTransactions] = useState<Transaction[]>([]);
-    const [loading, setLoading] = useState(false);
+    const { refreshStudents, refreshTransactions, transactions, studentFinanceData, loading } = useStudents();
     const [saving, setSaving] = useState(false);
     const [openDialog, setOpenDialog] = useState(false);
     const [openResult, setOpenResult] = useState(false);
     const [resultMessage, setResultMessage] = useState<string | null>(null);
     const formRef = useRef<TransactionFormRef>(null);
 
-    const fetchTransactions = async () => {
-        try {
-            setLoading(true);
-            const data = await getTransactions();
-            setTransactions(data);}catch (error) {
-            console.error("โหลดข้อมูลไม่สำเร็จ:", error);
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    
     const handleSave = async () => {
         if (!formRef.current) return;
         const valid = formRef.current.validateForm();
         if (!valid) return;
 
         const formData = formRef.current.getFormData();
+        const t = formData.type as "deposit" | "withdraw";
         const req: TransactionRequest = {
             student_id: formData.student_id,
             student_name: formData.student_name,
@@ -67,13 +53,19 @@ const TransactionPage = () => {
                 await createTransactionWithdraw(req);
             }
 
-            // ✅ ถ้าสำเร็จ
+            // Update data student
+            await updateBalance(req.student_id!, Number(req.amount), t, studentFinanceData);
+
+            // Refresh student AFTER save
+            await refreshStudents();
+
             setResultMessage("บันทึกข้อมูลเรียบร้อยแล้ว 🎉");
             setOpenResult(true);
 
-            // โหลดข้อมูลใหม่หลังบันทึกสำเร็จ
-            await fetchTransactions();
-        } catch (err: any) {
+            // Refresh transaction AFTER save
+            await refreshTransactions();
+
+        } catch (err) {
             console.error(err);
             setResultMessage("เกิดข้อผิดพลาดในการบันทึก กรุณาลองใหม่อีกครั้ง ❌");
             setOpenResult(true);
@@ -81,10 +73,6 @@ const TransactionPage = () => {
             setSaving(false);
         }
     };
-
-    useEffect(() => {
-        fetchTransactions();
-    }, []);
     // ────────────────────────────────
     // 🧾 UI
     // ────────────────────────────────
@@ -95,7 +83,7 @@ const TransactionPage = () => {
                     variant="primary"
                     startIcon={<CirclePlus />}
                     onClick={() => setOpenDialog(true)}
-                    >
+                >
                     เพิ่มรายการ
                 </AppButton>
             </Paper>

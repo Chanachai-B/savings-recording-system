@@ -18,4 +18,13 @@ const apiClient = axios.create({
 //     return config;
 // });
 
+// ⭐ Helper สำหรับ replace path params
+export function buildUrl(path: string, params: Record<string, string>) {
+    let result = path;
+    Object.entries(params).forEach(([key, value]) => {
+        result = result.replace(`{${key}}`, value);
+    });
+    return result;
+}
+
 export default apiClient;

@@ -10,3 +10,10 @@ export interface Student {
     total_withdrawal: string
     balance: string
 }
+
+export interface StudentFinance {
+    student_id: string
+    total_deposit: string
+    total_withdrawal: string
+    balance: string
+}
